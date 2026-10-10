@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Ruff
+.ruff_cache/
+
+# IDE
+.idea/
+.gigaide/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+
+# Logs (runtime)
+logs/*.log*
