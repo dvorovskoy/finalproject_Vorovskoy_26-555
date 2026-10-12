@@ -9,7 +9,10 @@ from valutatrade_hub.infra.settings import SettingsLoader
 
 _UNSET = object()
 
+
 class DatabaseManager:
+    """Singleton для чтения/записи JSON-файлов."""
+
     _instance: "DatabaseManager | None" = None
 
     def __new__(cls) -> "DatabaseManager":
@@ -19,26 +22,23 @@ class DatabaseManager:
         return cls._instance
 
     def __init__(self) -> None:
-        # __init__ не должен ничего переопределять: singleton-паттерн
-        pass
+        """Ничего не делает: singleton-паттерн."""
 
-    # --- публичный API ---
+    def read_json(self, path: str | Path, default: Any = _UNSET) -> Any:
+        """Читает JSON-файл.
 
-def read_json(self, path: str | Path, default: Any = _UNSET) -> Any:
-    """Читает JSON-файл.
-
-    Если default не передан — возвращает [] для отсутствующего/битого файла.
-    Если default передан явно (в т.ч. None) — возвращает его.
-    """
-    p = Path(path)
-    fallback = [] if default is _UNSET else default
-    if not p.exists():
-        return fallback
-    try:
-        with open(p, encoding="utf-8") as f:
-            return json.load(f)
-    except (OSError, json.JSONDecodeError):
-        return fallback
+        Если default не передан — возвращает [] для отсутствующего/битого файла.
+        Если default передан явно (в т.ч. None) — возвращает его.
+        """
+        p = Path(path)
+        fallback = [] if default is _UNSET else default
+        if not p.exists():
+            return fallback
+        try:
+            with open(p, encoding="utf-8") as f:
+                return json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return fallback
 
     def write_json(self, path: str | Path, data: Any) -> None:
         """Атомарно пишет JSON-файл: tmp → rename."""
@@ -55,8 +55,6 @@ def read_json(self, path: str | Path, default: Any = _UNSET) -> Any:
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
             raise
-
-    # --- удобные сокращения для ключевых файлов ---
 
     @property
     def users_path(self) -> Path:
