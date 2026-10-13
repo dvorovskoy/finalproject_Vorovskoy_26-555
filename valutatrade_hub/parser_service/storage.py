@@ -1,4 +1,5 @@
 """Хранилище курсов: снимок rates.json + история exchange_rates.json."""
+
 from datetime import UTC, datetime
 
 from valutatrade_hub.infra.database import DatabaseManager
@@ -9,9 +10,9 @@ class RatesStorage:
     """Сохраняет свежие курсы в снимок и в историю."""
 
     def __init__(
-            self,
-            config: ParserConfig | None = None,
-            db: DatabaseManager | None = None,
+        self,
+        config: ParserConfig | None = None,
+        db: DatabaseManager | None = None,
     ) -> None:
         self.config = config or ParserConfig()
         self.db = db or DatabaseManager()
@@ -37,11 +38,9 @@ class RatesStorage:
     # --- внутреннее ---
 
     def _build_snapshot(
-            self, rates: dict[str, float], sources: dict[str, str], now_iso: str
+        self, rates: dict[str, float], sources: dict[str, str], now_iso: str
     ) -> dict:
-        current = self.db.read_json(
-            self.config.RATES_FILE_PATH, default={"pairs": {}}
-        )
+        current = self.db.read_json(self.config.RATES_FILE_PATH, default={"pairs": {}})
         pairs = current.get("pairs", {})
 
         for key, rate in rates.items():
@@ -58,7 +57,7 @@ class RatesStorage:
         return {"pairs": pairs, "last_refresh": now_iso}
 
     def _append_history(
-            self, rates: dict[str, float], sources: dict[str, str], now_iso: str
+        self, rates: dict[str, float], sources: dict[str, str], now_iso: str
     ) -> int:
         history = self.db.read_json(self.config.HISTORY_FILE_PATH, default=[])
         if not isinstance(history, list):

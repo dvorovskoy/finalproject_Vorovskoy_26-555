@@ -1,4 +1,5 @@
 """Простейший планировщик периодического обновления курсов."""
+
 import time
 from collections.abc import Callable
 
@@ -8,9 +9,9 @@ logger = get_logger()
 
 
 def run_periodically(
-        task: Callable[[], None],
-        interval_seconds: int = 3600,
-        max_runs: int | None = None,
+    task: Callable[[], None],
+    interval_seconds: int = 3600,
+    max_runs: int | None = None,
 ) -> None:
 
     runs = 0

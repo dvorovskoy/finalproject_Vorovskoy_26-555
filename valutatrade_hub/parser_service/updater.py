@@ -1,4 +1,5 @@
 """Координация обновления курсов из нескольких источников."""
+
 from valutatrade_hub.logging_config import get_logger
 from valutatrade_hub.parser_service.api_clients import (
     BaseApiClient,
@@ -15,9 +16,9 @@ class RatesUpdater:
     """Опрашивает всех клиентов, объединяет и сохраняет курсы."""
 
     def __init__(
-            self,
-            clients: list[BaseApiClient] | None = None,
-            storage: RatesStorage | None = None,
+        self,
+        clients: list[BaseApiClient] | None = None,
+        storage: RatesStorage | None = None,
     ) -> None:
         config = ParserConfig()
         self.clients = clients or [
@@ -46,7 +47,9 @@ class RatesUpdater:
             rates.update(client_rates)
             for key in client_rates:
                 sources[key] = client.source
-            logger.info("Fetching from %s... OK (%d rates)", client.source, len(client_rates))
+            logger.info(
+                "Fetching from %s... OK (%d rates)", client.source, len(client_rates)
+            )
 
         if not rates:
             logger.error("No rates fetched from any source")

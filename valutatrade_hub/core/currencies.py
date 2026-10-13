@@ -1,4 +1,5 @@
 """Иерархия валют и реестр для ValutaTrade Hub."""
+
 from abc import ABC, abstractmethod
 
 from valutatrade_hub.core.exceptions import CurrencyNotFoundError
@@ -53,9 +54,7 @@ class FiatCurrency(Currency):
 class CryptoCurrency(Currency):
     """Криптовалюта (алгоритм + рыночная капитализация)."""
 
-    def __init__(
-            self, name: str, code: str, algorithm: str, market_cap: float
-    ) -> None:
+    def __init__(self, name: str, code: str, algorithm: str, market_cap: float) -> None:
         super().__init__(name, code)
         self.algorithm = algorithm
         self.market_cap = market_cap
@@ -63,8 +62,7 @@ class CryptoCurrency(Currency):
     def get_display_info(self) -> str:
         mcap = f"{self.market_cap:.2e}".replace("e+", "e")
         return (
-            f"[CRYPTO] {self.code} — {self.name} "
-            f"(Algo: {self.algorithm}, MCAP: {mcap})"
+            f"[CRYPTO] {self.code} — {self.name} (Algo: {self.algorithm}, MCAP: {mcap})"
         )
 
 

@@ -1,4 +1,5 @@
 """Клиенты для внешних API: CoinGecko (crypto) и ExchangeRate-API (fiat)."""
+
 from abc import ABC, abstractmethod
 
 import requests
@@ -43,9 +44,7 @@ class CoinGeckoClient(BaseApiClient):
         if response.status_code == 429:
             raise ApiRequestError("CoinGecko: превышен лимит запросов (429)")
         if response.status_code != 200:
-            raise ApiRequestError(
-                f"CoinGecko: HTTP {response.status_code}"
-            )
+            raise ApiRequestError(f"CoinGecko: HTTP {response.status_code}")
 
         try:
             data = response.json()
@@ -88,18 +87,14 @@ class ExchangeRateApiClient(BaseApiClient):
         try:
             response = requests.get(url, timeout=self.config.REQUEST_TIMEOUT)
         except requests.exceptions.RequestException as exc:
-            raise ApiRequestError(
-                f"ExchangeRate-API: network error — {exc}"
-            ) from exc
+            raise ApiRequestError(f"ExchangeRate-API: network error — {exc}") from exc
 
         if response.status_code == 401:
             raise ApiRequestError("ExchangeRate-API: неверный API-ключ (401)")
         if response.status_code == 429:
             raise ApiRequestError("ExchangeRate-API: превышен лимит (429)")
         if response.status_code != 200:
-            raise ApiRequestError(
-                f"ExchangeRate-API: HTTP {response.status_code}"
-            )
+            raise ApiRequestError(f"ExchangeRate-API: HTTP {response.status_code}")
 
         try:
             data = response.json()

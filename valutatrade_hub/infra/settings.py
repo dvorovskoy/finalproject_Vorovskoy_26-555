@@ -1,4 +1,5 @@
 """Singleton-конфигурация ValutaTrade Hub."""
+
 import json
 from pathlib import Path
 from typing import Any
@@ -19,7 +20,6 @@ DEFAULT_CONFIG: dict[str, Any] = {
 
 
 class SettingsLoader:
-
     _instance: "SettingsLoader | None" = None
 
     def __new__(cls, config_path: str | Path | None = None) -> "SettingsLoader":

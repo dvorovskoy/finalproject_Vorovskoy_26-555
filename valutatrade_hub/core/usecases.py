@@ -1,5 +1,6 @@
 """Бизнес-логика ValutaTrade Hub."""
-from datetime import datetime, timedelta
+
+from datetime import UTC, datetime, timedelta
 
 from valutatrade_hub.core.currencies import get_currency
 from valutatrade_hub.core.exceptions import (
@@ -33,6 +34,7 @@ _DEFAULT_RATES: dict[str, dict] = {
 
 
 # ---------- низкоуровневое хранилище ----------
+
 
 def _load_users() -> list[dict]:
     return _db.read_json(_db.users_path, default=[])
@@ -88,11 +90,12 @@ def _save_portfolio(portfolio: Portfolio) -> None:
 
 # ---------- курсы (кэш rates.json) ----------
 
+
 def _bootstrap_rates_if_missing() -> None:
     """Создаёт rates.json с заглушками, если файла ещё нет."""
     if _db.rates_path.exists():
         return
-    now = datetime.now().isoformat(timespec="seconds")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
     pairs = {k: {**v, "updated_at": now} for k, v in _DEFAULT_RATES.items()}
     _db.write_json(_db.rates_path, {"pairs": pairs, "last_refresh": now})
 
@@ -105,7 +108,7 @@ def _is_fresh(updated_at: str | None) -> bool:
         dt = datetime.fromisoformat(updated_at)
     except ValueError:
         return False
-    return datetime.now() - dt < timedelta(seconds=ttl)
+    return datetime.now(UTC) - dt < timedelta(seconds=ttl)
 
 
 def get_rate(from_code: str, to_code: str) -> dict:
@@ -125,7 +128,7 @@ def get_rate(from_code: str, to_code: str) -> dict:
             "from": f,
             "to": t,
             "rate": 1.0,
-            "updated_at": datetime.now().isoformat(timespec="seconds"),
+            "updated_at": datetime.now(UTC).isoformat(timespec="seconds"),
             "stale": False,
         }
 
@@ -150,6 +153,7 @@ def get_rate(from_code: str, to_code: str) -> dict:
 
 # ---------- usecases ----------
 
+
 @log_action("REGISTER")
 def register(username: str, password: str) -> User:
     """Регистрирует нового пользователя и создаёт пустой портфель."""
@@ -159,9 +163,7 @@ def register(username: str, password: str) -> User:
         raise ValueError(f"Имя пользователя '{username}' уже занято")
 
     users = _load_users()
-    user = User(
-        user_id=_next_user_id(users), username=username, password=password
-    )
+    user = User(user_id=_next_user_id(users), username=username, password=password)
     users.append(user.to_dict())
     _save_users(users)
     _save_portfolio(Portfolio(user))

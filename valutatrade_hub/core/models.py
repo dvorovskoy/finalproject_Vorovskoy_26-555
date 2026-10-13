@@ -1,4 +1,5 @@
 """Модели ValutaTrade Hub: User, Wallet, Portfolio."""
+
 import hashlib
 import secrets
 from datetime import datetime
@@ -22,13 +23,13 @@ class User:
     """Пользователь системы."""
 
     def __init__(
-            self,
-            user_id: int,
-            username: str,
-            password: str | None = None,
-            hashed_password: str | None = None,
-            salt: str | None = None,
-            registration_date: datetime | None = None,
+        self,
+        user_id: int,
+        username: str,
+        password: str | None = None,
+        hashed_password: str | None = None,
+        salt: str | None = None,
+        registration_date: datetime | None = None,
     ) -> None:
         self._user_id = user_id
         self.username = username
@@ -39,9 +40,7 @@ class User:
             self._salt = secrets.token_hex(8)
             self._hashed_password = self._hash_password(password)
         else:
-            raise ValueError(
-                "Укажите либо password, либо пару hashed_password + salt"
-            )
+            raise ValueError("Укажите либо password, либо пару hashed_password + salt")
         self._registration_date = registration_date or datetime.now()
 
     # --- свойства ---
@@ -241,8 +240,7 @@ class Portfolio:
     @classmethod
     def from_dict(cls, data: dict, user: User) -> "Portfolio":
         wallets = {
-            code: Wallet.from_dict(w)
-            for code, w in data.get("wallets", {}).items()
+            code: Wallet.from_dict(w) for code, w in data.get("wallets", {}).items()
         }
         return cls(user=user, wallets=wallets)
 

@@ -1,4 +1,5 @@
 """Singleton-абстракция над JSON-хранилищем."""
+
 import json
 import os
 import tempfile
